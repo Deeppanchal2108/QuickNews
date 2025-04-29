@@ -1,9 +1,9 @@
 import React from 'react'
-import LandingPage from '@/components/landing-page'
+
 function page() {
   return (
     <div>
-      <LandingPage/>
+      News Category
     </div>
   )
 }

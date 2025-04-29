@@ -1,9 +1,9 @@
 import React from 'react'
-import LandingPage from '@/components/landing-page'
+
 function page() {
   return (
     <div>
-      <LandingPage/>
+      Quick news
     </div>
   )
 }
