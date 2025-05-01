@@ -7,9 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useToast } from "@/hooks/use-toast"
 
 export default function LandingPage() {
+    const { toast } = useToast()
+
     const [email, setEmail] = useState("")
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const [count1, setCount1] = useState(0)
     const [count2, setCount2] = useState(0)
     const [count3, setCount3] = useState(0)
@@ -77,6 +81,48 @@ export default function LandingPage() {
         viewport: { once: true },
     }
 
+    const handleSubmitEmail = async () => {
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            alert("Please enter a valid email address");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setEmail("");
+                
+             
+                toast({
+                   title: "Success!",
+                   description: "Check your email for the latest news.",
+                });
+            } else {
+              
+                toast({
+                    title: "Error!",
+                    description: data.message,
+                });
+            }
+        } catch (error) {
+            console.error("Error sending email:", error);
+            alert("Failed to send email. Please try again later.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="min-h-screen font-sans bg-gray-50">
             {/* Hero Section */}
@@ -88,7 +134,7 @@ export default function LandingPage() {
                 <p className="max-w-md mt-6 text-lg text-gray-700">
                     Stay updated in seconds with concise headlines. No noise. Just news.
                 </p>
-                <Link href={"/hot-topics"}>
+
                     <Button
                         onClick={scrollToSignup}
                         className="mt-8 px-8 py-6 text-lg bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all"
@@ -96,7 +142,7 @@ export default function LandingPage() {
                         Get Updated
                         <ArrowDown className="ml-2 h-4 w-4" />
                     </Button>
-                </Link>
+                
             </motion.section>
 
             {/* How It Works - Flowchart Section */}
@@ -469,7 +515,13 @@ export default function LandingPage() {
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Button className="w-full rounded-lg bg-red-600 hover:bg-red-700 text-white">Notify Me</Button>
+                                            <Button
+                                                className="w-full rounded-lg bg-red-600 hover:bg-red-700 text-white"
+                                                onClick={handleSubmitEmail}
+                                                disabled={isSubmitting}
+                                            >
+                                                {isSubmitting ? "Sending..." : "Notify Me"}
+                                            </Button>
                                         </TooltipTrigger>
                                         <TooltipContent className="bg-red-50 text-red-800 border border-red-200">
                                             <p>26% of younger audiences prefer brief news</p>
