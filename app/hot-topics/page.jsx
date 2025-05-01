@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { fetchHotTopic } from "../actions/hotTopicActions"
+import { fetchHotTopic } from "../actions/actions"
 import { Clock, User, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 
 export default function NewsArticlePage() {
@@ -18,7 +18,7 @@ export default function NewsArticlePage() {
       try {
         setIsLoading(true)
         const response = await fetchHotTopic()
-        console.log(" in client Fetched articles:", response)
+        // console.log(" in client Fetched articles:", response)
 
         const fetchedArticles = response.data || []
 
